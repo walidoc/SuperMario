@@ -1,29 +1,39 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>
-#include <SDL_image.h>
-#include <SDL2/SDL_image.h>
-#include<SDL2/SDL_ttf.h>
+#include <SDL/SDL_image.h>
 
 void jouer(SDL_Surface *x);
 int mario_gagne(SDL_Surface *x);
-int colli_haut (SDL_Rect a , SDL_Rect b)
- { if ((a.y+a.h>=b.y) && (a.x+a.w>=b.x)&&(a.x+a.w<=b.x+b.w) )
+int colli_haut (SDL_Rect a , SDL_Rect T[])
+ {
+     int j;
+     for(j=0;j<3;j++)
+     {
+     if ((a.y+a.h>=T[j].y) && (a.x+a.w>=T[j].x)&&(a.x+a.w<=T[j].x+T[j].w) )
  return (1);
- else
+     }
 return (0);
 }
 
-int colli_droite (SDL_Rect a , SDL_Rect b)
- { if (a.x+a.w==b.x )
+int colli_droite (SDL_Rect a , SDL_Rect T[])
+ { int j;
+     for(j=0;j<3;j++)
+     {
+     if (((a.x+a.w)-1)==T[j].x )
  return (1);
- else
+     }
 return (0);
 }
-int colli_gauche (SDL_Rect a , SDL_Rect b)
- { if (a.x==b.x+b.w )
+int colli_gauche (SDL_Rect a , SDL_Rect T[])
+ {
+     int j;
+     for(j=0;j<3;j++)
+     {
+          if (a.x==T[j].x+T[j].w )
  return (1);
- else
+     }
+
 return (0);
 }
 int main(int argc, char *argv[])
@@ -82,7 +92,7 @@ int main(int argc, char *argv[])
 }
 
 
-//lorsque mario arrive à la princesse
+//lorsque mario arrive Ã  la princesse
 int mario_gagne(SDL_Surface *Ecran)
 {
     SDL_Surface *mariage;
@@ -100,19 +110,10 @@ int mario_gagne(SDL_Surface *Ecran)
 
 
 void jouer(SDL_Surface *Ecran)
-
-{   SDL_Surface  *textetime = NULL, *texte = NULL ,*textevie=NULL;
-    SDL_Rect positiontime,positiontext,positionvie;
- TTF_Font *policetime = NULL,*policetext = NULL;
-    SDL_Color couleurNoire = {0, 0, 117};
-   int tempsActuel = 0, tempsPrecedent = 0, compteurtime = 0, compteurscore=0,compteurvie=3;
-    char temps[20] = "";
-    char score[50]="";
-    char vie[20]="";
-    int continuer=1;
+{   int continuer=1;
     SDL_Surface *MarioActuel=NULL, *Panorama=NULL;
     SDL_Surface *Mario[9] = {NULL};
-    SDL_Rect positionMario,positionPanorama,positionActuel={0,0,32,60},posMarioRel,pos,w={1303,442,310,28},camera = { 0, 0, 800, 600 };
+    SDL_Rect positionMario,positionPanorama,positionActuel={0,0,32,60},posMarioRel,pos,T[3],camera = { 0, 0, 800, 600 };
     SDL_Event event,event_aux;
     Mario[1] = IMG_Load("images/mario0.png");
     Mario[2] = IMG_Load("images/mario1.png");
@@ -125,6 +126,9 @@ void jouer(SDL_Surface *Ecran)
     Mario[9] = IMG_Load("images/mario_mort.png");
     MarioActuel = Mario[1];
     Panorama = IMG_Load("panorama.bmp");
+    T[0]={1303,442,310,88};
+    T[1]={5944,442,195,88};
+    T[2]={6320,464,130,66};
     posMarioRel.x = -60;
     positionMario.x = 100;
     positionMario.y = 470;
@@ -135,21 +139,6 @@ void jouer(SDL_Surface *Ecran)
     SDL_EnableKeyRepeat(1, 1);
     SDL_SetColorKey(MarioActuel, SDL_SRCCOLORKEY, SDL_MapRGB(MarioActuel->format, 255, 255, 255));
     int j,i=1,k,sol;
-
-    TTF_Init();
-
-
-
-    /* Chargement de la police */
-    policetime = TTF_OpenFont("HARD.TTF", 34);
-   policetext = TTF_OpenFont("HARD.TTF", 34);
-
-    /* Initialisation du temps et du texte */
-    tempsActuel = SDL_GetTicks();
-    sprintf(temps, "Temps : %d", compteurtime);
-    //texte = TTF_RenderText_Blended(police, temps, couleurNoire);
-    sprintf (score,"score : %d",compteurscore);
-    sprintf (vie," %d vie ",compteurvie);
 while(continuer)
 {
                 SDL_PollEvent(&event);
@@ -162,7 +151,7 @@ while(continuer)
                                         switch(event.key.keysym.sym)
                                             {
 
-                                                    case SDLK_UP: // Flèche haut/////////////////////////////////////////////////////////////////
+                                                    case SDLK_UP: // FlÃ¨che haut/////////////////////////////////////////////////////////////////
                                                    {pos.x=positionMario.x ;
                                                     pos.y=positionMario.y ;
                                                     if(event_aux.key.keysym.sym==SDLK_RIGHT)
@@ -186,7 +175,7 @@ while(continuer)
 
 
                                                        }
-                                while(positionMario.y<470 && !colli_haut(positionActuel,w));
+                                while(positionMario.y<470 && !colli_haut(positionActuel,T));
                                                         posMarioRel.x = -60;
                                                         posMarioRel.y = 0;
                                                     }
@@ -209,7 +198,8 @@ while(continuer)
                                                             SDL_Delay(5);
                                                             positionActuel.x--;
                                                             positionActuel.y=positionMario.y;
-                                                       }while(positionMario.y<470 && !colli_haut(positionActuel,w));
+                                                       }
+                                while(positionMario.y<470 && !colli_haut(positionActuel,T));
 
 
                                                         posMarioRel.x = -60;
@@ -242,14 +232,14 @@ while(continuer)
 
                                                     event_aux.key.keysym.sym=SDLK_UP;
                                                 break;
-                                                case SDLK_DOWN: // Flèche bas
+                                                case SDLK_DOWN: // FlÃ¨che bas
                                                 if(i<4)
                                                     MarioActuel=Mario[4];
                                                 else
                                                     MarioActuel=Mario[8];
                                                      event_aux.key.keysym.sym=SDLK_DOWN;
                                                 break;
-                                                case SDLK_RIGHT: // Flèche droite
+                                                case SDLK_RIGHT: // FlÃ¨che droite
                                                     {
                                                         if(i<3)
                                                         {
@@ -257,7 +247,7 @@ while(continuer)
                                                         }
                                                         else if(i>=3)
                                                         {i=1;}
-     if((positionActuel.x==(w.x+w.w))&&(positionActuel.y<w.y))
+     if(((positionActuel.x==(T[0].x+T[0].w))&&(positionActuel.y<T[0].y))||((positionActuel.x==(T[1].x+T[1].w))&&(positionActuel.y<T[1].y))||((positionActuel.x==(T[2].x+T[2].w))&&(positionActuel.y<T[2].y)))
         {
             for(k=0;positionActuel.y!=470;k++)
             {positionActuel.y++;
@@ -272,7 +262,7 @@ while(continuer)
         }
 
                                                         MarioActuel=Mario[i];
-                                                        if(!colli_droite(positionActuel,w))
+                                                        if(!colli_droite(positionActuel,T))
                                                         {
                                                         if(positionMario.x>=400)
                                                         {
@@ -296,7 +286,7 @@ while(continuer)
 
                                                      event_aux.key.keysym.sym=SDLK_RIGHT;
                                                 break;
-                                                case SDLK_LEFT: // Flèche gauche
+                                                case SDLK_LEFT: // FlÃ¨che gauche
                                                 {   if((i==5)||(i==6))
                                                         {
                                                             i++;
@@ -305,7 +295,7 @@ while(continuer)
                                                         {i=5;}
                                                     else if(i<4)
                                                         i=5;
-        if((positionActuel.x+positionMario.w+1==w.x-1)&&(positionActuel.y<w.y))
+if(((positionActuel.x+positionMario.w+1==T[0].x -1)&&(positionActuel.y<T[0].y))||((positionActuel.x+positionMario.w+1==T[1].x -1)&&(positionActuel.y<T[1].y))||((positionActuel.x+positionMario.w+1==T[2].x -1)&&(positionActuel.y<T[2].y)))
         {
             for(k=0;positionActuel.y!=470;k++)
             {positionActuel.y++;
@@ -320,7 +310,7 @@ while(continuer)
         }
 
                                                     MarioActuel=Mario[i];
-                                                    if(!colli_gauche(positionActuel,w))
+                                                    if(!colli_gauche(positionActuel,T))
                                                         {
                                                         if(positionMario.x>0)
                                                         {
@@ -354,7 +344,7 @@ while(continuer)
                                                          event_aux.key.keysym.sym=SDLK_UP;
                                                 break;
 
-                                                case SDLK_DOWN: // Flèche bas
+                                                case SDLK_DOWN: // FlÃ¨che bas
                                                 {if(i<4)
                                                     MarioActuel=Mario[1];
                                                 else
@@ -362,12 +352,12 @@ while(continuer)
                                                 }
                                                  event_aux.key.keysym.sym=SDLK_DOWN;
                                                 break;
-                                                case SDLK_RIGHT: // Flèche droite
+                                                case SDLK_RIGHT: // FlÃ¨che droite
 
                                                         MarioActuel=Mario[1];
                                                          event_aux.key.keysym.sym=SDLK_DOWN;
                                                 break;
-                                                 case SDLK_LEFT: // Flèche gauche
+                                                 case SDLK_LEFT: // FlÃ¨che gauche
 
                                                         MarioActuel=Mario[5];
                                                          event_aux.key.keysym.sym=SDLK_DOWN;
@@ -412,41 +402,13 @@ if((((positionActuel.x>=2237)&&(positionActuel.x<=2344))||((positionActuel.x>=29
                 }
 
                 SDL_FillRect(Ecran, NULL, SDL_MapRGB(Ecran->format, 0, 0, 0));
+                SDL_BlitSurface(Panorama, &camera, Ecran, NULL);
 
-
-        tempsActuel = SDL_GetTicks();
-        if (tempsActuel - tempsPrecedent >= 1000) /* Si 100ms au moins se sont écoulées */
-        {
-            compteurtime += 1; /* On rajoute 100ms au compteur */
-            sprintf(temps, "Temps : %d", compteurtime); /* On écrit dans la chaîne "temps" le nouveau temps */
-           //SDL_FreeSurface(texte); /* On supprime la surface précédente de la mémoire avant d'en charger une nouvelle (IMPORTANT) */
-            textetime = TTF_RenderText_Blended(policetime, temps, couleurNoire); /* On écrit la chaine temps dans la SDL_Surface */
-            tempsPrecedent = tempsActuel; /* On met à jour le tempsPrecedent */
-}
-texte = TTF_RenderText_Blended(policetext, "score :", couleurNoire);
-textevie = TTF_RenderText_Blended(policetext, "vies", couleurNoire);
-positiontext.x = 570;
-positiontext.y = 5;
-
-positionvie.x = 300;
-positionvie.y = 5;
-
-        positiontime.x = 0;
-        positiontime.y = 5;
-         SDL_BlitSurface(Panorama, &camera, Ecran, NULL);
-
-        SDL_BlitSurface(textetime, NULL,Ecran, &positiontime);
-         /* Blit du texte contenant le temps */
-    SDL_BlitSurface(texte, NULL,Ecran, &positiontext);
-     SDL_BlitSurface(textevie, NULL,Ecran, &positionvie);
                 SDL_BlitSurface(MarioActuel, NULL, Ecran, &positionMario);
-
-
                 SDL_Flip(Ecran);
 
 }
 }
-
 
 
 
