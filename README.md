@@ -6,6 +6,10 @@ This project was made for educational pusposes. The game was implemented in C la
 Also the user-interface for this project is in the French langauge.
 
 # Usage
-To use this project you need to :
-Install CodeBlocks or any other IDE for C language.
-Install SDL, SDL_image and SDL_ttf libraries and integrate them in your IDE.
+First you need to install the libraries SDL and SDL_image.
+```
+git clone https://github.com/walidoc/SuperMario.git
+cd SuperMario-master
+gcc main.cpp -lSDL -lSDL_image -o main
+./main
+```
