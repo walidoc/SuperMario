@@ -9,7 +9,7 @@ Also the user-interface for this project is in the French langauge.
 First you need to install the libraries SDL and SDL_image.
 ```
 git clone https://github.com/walidoc/SuperMario.git
-cd SuperMario-master
+cd SuperMario
 gcc main.cpp -lSDL -lSDL_image -o main
 ./main
 ```
