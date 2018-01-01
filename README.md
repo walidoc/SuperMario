@@ -2,7 +2,7 @@
 A mini Super Mario game inspired from the original one.
 
 # About
-This project was made for educational pusposes. The game was implemented in C language with help of SDL library integrated in CodeBlocks for the graphics. 
+This project was made for educational purposes. The game was implemented in C++ language with help of SDL library integrated in CodeBlocks for the graphics. 
 Also the user-interface for this project is in the French langauge.
 
 # Usage
